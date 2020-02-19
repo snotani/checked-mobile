@@ -1,6 +1,6 @@
-# checked_mobile_application
+[![Codemagic build status](https://api.codemagic.io/apps/5e4d5a98b084512f90c6fac1/5e4d5a98b084512f90c6fac0/status_badge.svg)](https://codemagic.io/apps/5e4d5a98b084512f90c6fac1/5e4d5a98b084512f90c6fac0/latest_build)
 
-A new Flutter project.
+# Checked Mobile
 
 ## Getting Started
 
