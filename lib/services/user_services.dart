@@ -11,6 +11,9 @@ class UserServices{
 
   static const signUpEndpoint = "/users/create";
   static const signInEndpoint = "/users/login";
+  static const getCommentsEndpoint = "/comments/members/";
+  static const getMembersByUserEndpoint = "/members/users/";
+  static const getHistoryEndpoint = "/historic/";
 
   // signup a user and return a response
   Future<APIResponse> postSignup(String _email, String _password, String _company) async {
@@ -21,7 +24,6 @@ class UserServices{
     return http.post(API+signUpEndpoint,body: _body ,headers: headers)
       .then((data){
         var jsonData = json.decode(data.body);
-        print(jsonData);
         if(jsonData["code"] == 201){
           return APIResponse(data:jsonData["result"], error: false);
         }else if(jsonData["code"] == 400){
@@ -46,6 +48,71 @@ class UserServices{
         }
     }).catchError((e) => APIResponse(data: "",errorMessage: jsonData["message"], error: true));
   }
+
+  // get all the members that are linked to the user
+  Future<APIResponse> getMembersByUser(String userId) async {
+  dynamic jsonData;
+  
+  return http.get(API+getMembersByUserEndpoint+userId,headers: headers)
+    .then((data){
+      var jsonData = json.decode(data.body);
+      if(jsonData["code"] == 200){
+        return APIResponse(data:jsonData["result"]);
+      }else if(jsonData["code"] == 401){
+        return APIResponse(data:"",errorMessage: jsonData["message"], error: true);
+      }
+    }).catchError((e) => APIResponse(data: "",errorMessage: jsonData["message"], error: true));
+  }
+
+    // get all the members that are linked to the user
+  Future<APIResponse> getHistory(int userId) async {
+  dynamic jsonData;
+  
+  return http.get(API+getHistoryEndpoint+userId.toString(),headers: headers)
+    .then((data){
+      var jsonData = json.decode(data.body);
+      if(jsonData["code"] == 200){
+        return APIResponse(data:jsonData["result"]);
+      }else if(jsonData["code"] == 401){
+        return APIResponse(data:"",errorMessage: jsonData["message"], error: true);
+      }
+    }).catchError((e) => APIResponse(data: "",errorMessage: jsonData["message"], error: true));
+  }
+
+  // get all the comments for this user
+  Future<APIResponse> getComments(List<dynamic> memberId) async {
+  dynamic jsonData;
+  List results = [];
+
+  for (var item in memberId) {
+    try{
+      var uriResponse = await http.get(API+getCommentsEndpoint+item.toString(),headers: headers);
+      var jsonData = json.decode(uriResponse.body);
+
+      if(jsonData["code"]== 200){
+        jsonData["result"].forEach((element) => results.add(element));
+      }else if(jsonData["code"] == 401){
+        print("bad request");
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+
+  return APIResponse(data:results);
+
+  
+  // return http.get(API+getCommentsEndpoint+memberId,headers: headers)
+  //   .then((data){
+  //     var jsonData = json.decode(data.body);
+  //     if(jsonData["code"] == 200){
+  //       return APIResponse(data:jsonData["result"]);
+  //     }else if(jsonData["code"] == 401){
+  //       return APIResponse(data:"",errorMessage: jsonData["message"], error: true);
+  //     }
+  //   }).catchError((e) => APIResponse(data: "",errorMessage: jsonData["message"], error: true));
+  }
+  
 }
 
   

@@ -1,6 +1,7 @@
 import 'package:checked_mobile_application/module/api_respose.dart';
-import 'package:checked_mobile_application/module/zone.dart';
+import 'package:checked_mobile_application/screens/historic.dart';
 import 'package:checked_mobile_application/services/zone_services.dart';
+import 'package:checked_mobile_application/services/notification_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -23,7 +24,14 @@ class _HomeState extends State<Home> {
 
   _asyncMethod() async {
     _apiresponse = await service.getZonesByUser(widget.userId);
-    print(_apiresponse.data[1]);
+    //print(_apiresponse.data[1]);
+    return _apiresponse;
+  }
+
+  _asyncAdd() async {
+    _apiresponse = await service.createZone(widget.userId, "New Zone", 200.0, 00.0, 0.0, 0.0, Colors.amber);
+    //print(_apiresponse.data[1]);
+    return _apiresponse;
   }
 
   @override
@@ -55,8 +63,7 @@ class _HomeState extends State<Home> {
               color: Colors.black,
             ),
             onPressed: () async {
-              _apiresponse = await service.getZonesByUser(widget.userId);
-              for(dynamic _ in _apiresponse.data) DragBox(Offset(0.0, 0.0), 100.0, 100.0, _apiresponse.data[0]["name"], Colors.orange[400]);
+              _asyncMethod();
             },
           ),
         ],
@@ -76,7 +83,7 @@ class _HomeState extends State<Home> {
             ),
             InkWell(
               onTap: (){
-
+                Navigator.push(context,MaterialPageRoute(builder: (context) => Home(userId:_apiresponse.data["userId"])));
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,7 +107,9 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(height: 30,),
             InkWell(
-              onTap: (){},
+              onTap: (){
+                Navigator.push(context,MaterialPageRoute(builder: (context) => History(userId:widget.userId)));
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -110,7 +119,7 @@ class _HomeState extends State<Home> {
                         padding: const EdgeInsets.symmetric(horizontal:8.0),
                         child: Icon(Icons.directions_run),
                       ),
-                      Text("Activity",style: 
+                      Text("History",style: 
                         TextStyle(
                           fontWeight: FontWeight.w600
                         )
@@ -185,17 +194,43 @@ class _HomeState extends State<Home> {
         ),
         child: Stack(
           children: <Widget>[
-            for(dynamic _ in _apiresponse.data) DragBox(Offset(0.0, 0.0), 100.0, 100.0, _apiresponse.data[0]["name"], Colors.orange[400]),
-            //Zone(widget.userId, "Ball", 100, 100, 0, 0, Colors.amber),
-            //DragBox(Offset(0.0, 0.0), _apiresponse.data[1]["name"], Colors.orange[400]),
-            //DragBox(Offset(100.0, 0.0), _apiresponse.data[2]["name"], Colors.orange[600]),
+            Container(
+            padding: const EdgeInsets.all(10.0),
+            child: FutureBuilder(
+              future: _asyncMethod(),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return new Text('No data');
+                  case ConnectionState.waiting:
+                    return new Center(child: new CircularProgressIndicator());
+                  case ConnectionState.active:
+                    return new Text('');
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return new Text(
+                        '${snapshot.error}',
+                        style: TextStyle(color: Colors.red),
+                      );
+                    } else {
+                    print(snapshot.data.data);
+                    return Stack (
+                      children: <Widget>[
+                        for (var index in snapshot.data.data)
+                          DragBox(Offset(0.0, 0.0), index["width"].toDouble()*0.4, index["height"].toDouble()*0.4, index["name"], Colors.orange, index['width']*0.06)
+                      ]
+                    );
+                  }
+                }
+              })
+            ),
             Positioned(
               left: 0.0,
               bottom: 0.0,
               child: DragTarget(
-                // onAccept: (Color color) {
-                //   deletedColor = Colors.red[400];
-                // },
+                onAccept: (Color color) {
+                  deletedColor = Colors.red[400];
+                },
                 onLeave: (Color) {
                   deletedColor = Colors.red[200];
                 },
@@ -231,13 +266,15 @@ class _HomeState extends State<Home> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: (){
+          _asyncAdd();
+        },
         backgroundColor: Colors.green,
         tooltip: 'Add a new zone',
         child: Icon(
           Icons.add,
           color: Colors.white,
-          ),
+        ),
       ),
     );
   }
@@ -247,10 +284,11 @@ class DragBox extends StatefulWidget {
   final Offset initPos;
   final double width;
   final double height;
+  final double fontSize;
   final String label;
   final Color itemColor;
 
-  DragBox(this.initPos, this.width, this.height, this.label, this.itemColor);
+  DragBox(this.initPos, this.width, this.height, this.label, this.itemColor, this.fontSize);
 
   @override
   _DragBoxState createState() => _DragBoxState();
@@ -263,11 +301,6 @@ class _DragBoxState extends State<DragBox> {
   void initState() {
     super.initState();
     position = widget.initPos;
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() {
-        // Here you can write your code for open new view
-      });
-    });
   }
 
   @override
@@ -291,7 +324,7 @@ class _DragBoxState extends State<DragBox> {
                     style: TextStyle(
                       color: Colors.white,
                       decoration: TextDecoration.none,
-                      fontSize: 15.0
+                      fontSize: widget.fontSize
                     ),
                   ),
                 ],
