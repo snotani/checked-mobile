@@ -1,4 +1,5 @@
-package com.example.ondevice;
+package com.example.checked_mobile_application;
+
 import org.tensorflow.lite.Interpreter;
 import android.os.Bundle;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import android.content.res.AssetFileDescriptor;
 
-
 public class MainActivity extends FlutterActivity {
 private static final String CHANNEL = "ondeviceML";
 protected Interpreter tflite;
@@ -30,8 +30,7 @@ protected Interpreter tflite;
     } catch (Exception e) {
       //TODO: handle exception
     }
-
-   
+    
     new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(
     new MethodCallHandler() {
         @Override
@@ -51,7 +50,6 @@ protected Interpreter tflite;
     });
   }
   
- 
   String predictData(ArrayList<Integer> input_data)
   {
     float intArray[][] = new float[1][input_data.size()];
@@ -84,15 +82,4 @@ protected Interpreter tflite;
   long declaredLength = fileDescriptor.getDeclaredLength();
   return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
   }
-
-
-  
 }
- 
-  
-  
-
-
-
-
-
