@@ -1,4 +1,4 @@
-package com.example.checked_mobile_application
+package com.example.checked_mobile_application;
 
 import org.tensorflow.lite.Interpreter;
 import android.os.Bundle;
