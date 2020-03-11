@@ -1,6 +1,6 @@
-[![Codemagic build status](https://api.codemagic.io/apps/5e4d5a98b084512f90c6fac1/5e4d5a98b084512f90c6fac0/status_badge.svg)](https://codemagic.io/apps/5e4d5a98b084512f90c6fac1/5e4d5a98b084512f90c6fac0/latest_build) [![Coverage Status](https://coveralls.io/repos/github/snotani/checked-mobile/badge.svg?branch=master)](https://coveralls.io/github/snotani/checked-mobile?branch=master)
+# checked_mobile_application
 
-# Checked Mobile
+A new Flutter project.
 
 ## Getting Started
 

@@ -11,6 +11,7 @@ class MembersServices{
   };
 
   static const createMemberEndpoint = "/members/create";
+  static const updateSettingsEndpoint = "/settings/update/";
 
   Future<APIResponse> postCreateMember(String _userId, String _firstName, String _lastName) async {
     String _body = 'userId=$_userId&firstName=$_firstName&companyName=$_lastName';
@@ -20,7 +21,6 @@ class MembersServices{
     return http.post(API+createMemberEndpoint,body: _body ,headers: headers)
       .then((data){
         var jsonData = json.decode(data.body);
-        print(jsonData);
         if(jsonData["code"] == 201){
           return APIResponse(data:jsonData["result"], error: false);
         }else if(jsonData["code"] == 400){
@@ -28,6 +28,7 @@ class MembersServices{
         }
       }).catchError((e) => APIResponse(data: "",errorMessage: jsonData["message"], error: true));
   }
+
 
 
 }

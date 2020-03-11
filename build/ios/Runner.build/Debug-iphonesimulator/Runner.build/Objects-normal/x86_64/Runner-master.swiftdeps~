@@ -1,0 +1,5 @@
+version: "Apple Swift version 5.1.2 (swiftlang-1100.0.278 clang-1100.0.33.9)"
+options: "9ae2da7a89d8f5d601f35b245b0456e0"
+build_time: [1583944599, 853948000]
+inputs:
+  "/Users/siddharthnotani/Desktop/scc331/checked/checked_mobile_application/ios/Runner/AppDelegate.swift": [1583944522, 29717833]
